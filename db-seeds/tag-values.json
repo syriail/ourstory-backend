@@ -1,0 +1,23 @@
+[
+    {
+        "storyId":"2ef83f35-e369-4fdc-8a3a-8d4cb3fcc18f",
+        "tagId":"929e483b-9fe7-46b1-acca-516a7ab2551f#more_info",
+        "locale":"en",
+        "name":"More Info",
+        "value":"This story has been added in summer"
+    },
+    {
+        "storyId":"e9cb6032-0bc3-4fd1-bbc1-2ce45b98348c",
+        "tagId":"929e483b-9fe7-46b1-acca-516a7ab2551f#more_info",
+        "locale":"en",
+        "name":"More Info",
+        "value":"It was pretty relaxing to work on this one"
+    },
+    {
+        "storyId":"41935f60-652d-4a4f-b1fe-7eb8db577924",
+        "tagId":"929e483b-9fe7-46b1-acca-516a7ab2551f#more_info",
+        "locale":"en",
+        "name":"More Info",
+        "value":"Was boring!"
+    }
+]

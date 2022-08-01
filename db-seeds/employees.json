@@ -1,0 +1,23 @@
+[
+    {
+        "id": "1",
+        "firstName": "Hussein",
+        "lastName": "Ghrer",
+        "roles": ["ADMIN", "COLLECTION_MANAGER", "EDITOR"],
+        "locale": "en"
+    },
+    {
+        "id": "2",
+        "firstName": "Mike",
+        "lastName": "Smith",
+        "roles": ["EDITOR"],
+        "locale": "en"
+    },
+    {
+        "id": "3",
+        "firstName": "Sarah",
+        "lastName": "Muller",
+        "roles": ["COLLECTION_MANAGER"],
+        "locale": "ar"
+    }
+]

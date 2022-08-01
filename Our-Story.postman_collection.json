@@ -1,0 +1,649 @@
+{
+	"info": {
+		"_postman_id": "472e2c54-6aa2-42c1-b3aa-38a0664626f9",
+		"name": "Our Story",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3027912"
+	},
+	"item": [
+		{
+			"name": "Authorized",
+			"item": [
+				{
+					"name": "Get Stories / Collection 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Three stories are returned\", function () {",
+									"    let stories = pm.response.json().stories",
+									"    pm.expect(stories.length).to.equal(3)",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/stories/929e483b-9fe7-46b1-acca-516a7ab2551f?locale=en",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"stories",
+								"929e483b-9fe7-46b1-acca-516a7ab2551f"
+							],
+							"query": [
+								{
+									"key": "locale",
+									"value": "en"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Collections/Employee id = 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Two collections are returned\", function () {",
+									"    let collections = pm.response.json().collections",
+									"    pm.expect(collections.length).to.equal(2)",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/collections?locale=en",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"collections"
+							],
+							"query": [
+								{
+									"key": "locale",
+									"value": "en"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Collections/Employee id = 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Three collections are returned\", function () {",
+									"    let collections = pm.response.json().collections",
+									"    pm.expect(collections.length).to.equal(3)",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{employee3Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/collections?locale=en",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"collections"
+							],
+							"query": [
+								{
+									"key": "locale",
+									"value": "en"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Upload URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Upload URL returned\", function () {",
+									"    let urls = pm.response.json()",
+									"    pm.expect(urls.uploadUrl).exist",
+									"});",
+									"pm.test(\"AttachmentUrl URL returned\", function () {",
+									"    let urls = pm.response.json()",
+									"    pm.expect(urls.attachmentUrl).exist",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/uploadUrl/41935f60-652d-4a4f-b1fe-7eb8db577924?mediaFormat=image&fileExtension=png",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploadUrl",
+								"41935f60-652d-4a4f-b1fe-7eb8db577924"
+							],
+							"query": [
+								{
+									"key": "mediaFormat",
+									"value": "image"
+								},
+								{
+									"key": "fileExtension",
+									"value": "png"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Story",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Story created with correct title\", function () {",
+									"    let story = pm.response.json().story",
+									"    pm.expect(story.storyTitle).to.equal(\"Postman story\")",
+									"});",
+									"pm.test(\"Story created with correct collection id\", function () {",
+									"    let story = pm.response.json().story",
+									"    pm.expect(story.collectionId).to.equal(\"41935f60-652d-4a4f-b1fe-7eb8db577924\")",
+									"});",
+									"pm.test(\"Story created with correct type\", function () {",
+									"    let story = pm.response.json().story",
+									"    pm.expect(story.storyType).to.equal(\"HISTORY\")",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"storyTitle\":\"Postman story\",\n    \"collectionId\": \"11107d91-d88c-40eb-a7af-b0774cc30a14\",\n    \"defaultLocale\": \"en\",\n    \"storyType\": \"HISTORY\",\n    \"storyTranscript\": \"The whole story of Postman\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/stories",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"stories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Story",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Story updated with correct title\", function () {",
+									"    let story = pm.response.json().story",
+									"    pm.expect(story.storyTitle).to.equal(\"Postman story\")",
+									"});",
+									"pm.test(\"Story updated with correct type\", function () {",
+									"    let story = pm.response.json().story",
+									"    pm.expect(story.storyType).to.equal(\"HISTORY\")",
+									"});",
+									"pm.test(\"Story updated with correct transcript\", function () {",
+									"    let story = pm.response.json().story",
+									"    pm.expect(story.storyTranscript).to.equal(\"The whole story of Postman\")",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"storyTitle\":\"Postman story\",\n    \"collectionId\": \"11107d91-d88c-40eb-a7af-b0774cc30a14\",\n    \"defaultLocale\": \"en\",\n    \"storyType\": \"HISTORY\",\n    \"storyTranscript\": \"The whole story of Postman\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/story/2ef83f35-e369-4fdc-8a3a-8d4cb3fcc18f",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"story",
+								"2ef83f35-e369-4fdc-8a3a-8d4cb3fcc18f"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{employee2Token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Unauthorized/Malformed Token",
+			"item": [
+				{
+					"name": "Get Stories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/stories/2?locale=en",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"stories",
+								"2"
+							],
+							"query": [
+								{
+									"key": "locale",
+									"value": "en"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Collections",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/stories/2?locale=en",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"stories",
+								"2"
+							],
+							"query": [
+								{
+									"key": "locale",
+									"value": "en"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{malformedtoken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Unauthorized User's Role",
+			"item": [
+				{
+					"name": "Create Collection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{notPermittedUserToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Collection\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/collections",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"collections"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bad Request/Request Validation",
+			"item": [
+				{
+					"name": "Create Story",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 bad request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"collectionId\": \"3\",\n    \"defaultLocale\": \"en\",\n    \"storyType\": \"HISTORY\",\n    \"storyTranscript\": \"The whole story of Postman\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/stories",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"stories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Story",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 bad request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"collectionId\": \"2\",\n    \"defaultLocale\": \"en\",\n    \"storyType\": \"HISTORY\",\n    \"storyTranscript\": \"The whole story of Postman\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/story/21",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"story",
+								"21"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{employee2Token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:3000/dev",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJSUzI1NiIsImVudGl0bGVtZW50IjoiMTkwdWZwbnVoY3h0MGE3c2F2eTR0OSJ9.eyJpc3MiOiJvZmZsaW5lIiwic3ViIjoiMiIsImNvZ25pdG86Z3JvdXBzIjpbIkNPTExFQ1RJT05fTUFOQUdFUiIsIkVESVRPUiJdLCJhdWQiOiJuYXRhbGlhIiwiaWF0IjoxNjU2NDkyNTE2LCJleHAiOjE3NTY0OTMxMTYsImFhYSI6IjV1Z2YydXN4ZjJ4OW8zeWhoMjlibyJ9.btZphyMDSbo-F-UFZkOXSzx09zcfsFIS4U0g-vVS-RVYntm3J6GBSjI5DrDLxeq9Zp1j_G_x7z6P8Bpu3n9P2c-8YBgjZ7hnWv0ngY7JuClCj2EoXLMXSc2JWvJhngNkhSQ0XK9DAiVRwDidNuPG5dU_5puq8A9khppbNGG7pAjV83PUVzMvoc09sfkk3ghzLTNayVXqHhvJQGfzoWs06NVYlVV8FDgDwuxruf5M69dn0cxKOtxgc6dG_y5Wc44-PslhnKzIBHvwxPO1wXm2WbxsYuoSNNn16VvaCf9DmOCA9oAc1sdTRedhvYbDTfV91HKU2ii5cuFb6de2ngIHqA",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "malformedToken",
+			"value": "123",
+			"type": "string"
+		},
+		{
+			"key": "notPermittedUserToken",
+			"value": "eyJhbGciOiJSUzI1NiIsImVudGl0bGVtZW50IjoiMTkwdWZwbnVoY3h0MGE3c2F2eTR0OSJ9.eyJpc3MiOiJvZmZsaW5lIiwic3ViIjoiMiIsImNvZ25pdG86Z3JvdXBzIjpbIkVESVRPUiJdLCJhdWQiOiJuYXRhbGlhIiwiaWF0IjoxNjU2NDkyNTE2LCJleHAiOjE3NTY0OTMxMTYsImFhYSI6IjV1Z2YydXN4ZjJ4OW8zeWhoMjlibyJ9.uBtb01HYwsTVr2cA1q3idxb64QHy-YNc6nKBhPV-yLyicVLbk6-EVFHDYJ6JTwZ8M9BuQ_JHxzQ1Pohhxe7oaCmUIdw91H1gj-QdfZItQMeqmR1rnb5jbFjpDgWqFSkfxMKtt8TXOze56sx9OswG3xE1ESB0Um-1qO4HaPcQNg9-NdtRpPIAq132NBeAGIkRnzRcbODQ-cejw8J2Oe5LfdZRtCaEnBqTqaKOpBFG7rYwUteSiiM32_be_WdSsijrj6CAcsa4Vb-Zc4u6i0AEYKW-CTJaDyVuWeQUjMenb_9qaU3ozGu6ATWHEhU_NDzopjCsI1o0y1REk6w0SeTIEg",
+			"type": "string"
+		},
+		{
+			"key": "employee2Token",
+			"value": "eyJhbGciOiJSUzI1NiIsImVudGl0bGVtZW50IjoiMTkwdWZwbnVoY3h0MGE3c2F2eTR0OSJ9.eyJpc3MiOiJvZmZsaW5lIiwic3ViIjoiMiIsImNvZ25pdG86Z3JvdXBzIjpbIkVESVRPUiJdLCJhdWQiOiJuYXRhbGlhIiwiaWF0IjoxNjU2NDkyNTE2LCJleHAiOjE3NTY0OTMxMTYsImFhYSI6IjV1Z2YydXN4ZjJ4OW8zeWhoMjlibyJ9.uBtb01HYwsTVr2cA1q3idxb64QHy-YNc6nKBhPV-yLyicVLbk6-EVFHDYJ6JTwZ8M9BuQ_JHxzQ1Pohhxe7oaCmUIdw91H1gj-QdfZItQMeqmR1rnb5jbFjpDgWqFSkfxMKtt8TXOze56sx9OswG3xE1ESB0Um-1qO4HaPcQNg9-NdtRpPIAq132NBeAGIkRnzRcbODQ-cejw8J2Oe5LfdZRtCaEnBqTqaKOpBFG7rYwUteSiiM32_be_WdSsijrj6CAcsa4Vb-Zc4u6i0AEYKW-CTJaDyVuWeQUjMenb_9qaU3ozGu6ATWHEhU_NDzopjCsI1o0y1REk6w0SeTIEg",
+			"type": "string"
+		},
+		{
+			"key": "employee3Token",
+			"value": "eyJhbGciOiJSUzI1NiIsImVudGl0bGVtZW50IjoiMTkwdWZwbnVoY3h0MGE3c2F2eTR0OSJ9.eyJpc3MiOiJvZmZsaW5lIiwic3ViIjoiMyIsImNvZ25pdG86Z3JvdXBzIjpbIkNPTExFQ1RJT05fTUFOQUdFUiJdLCJhdWQiOiJuYXRhbGlhIiwiaWF0IjoxNjU2NDkyNTE2LCJleHAiOjE3NTY0OTMxMTYsImFhYSI6IjV1Z2YydXN4ZjJ4OW8zeWhoMjlibyJ9.l0gnos3jXrYdH1y19Vz-DSjJ_HQpHjHHthnr6OayEAT7RrV8cqdk4m1-jr67oN_WpY__p0wD6l17M5Yhg-qcejte0Jlx1v0h9_X_kgLqvz9xd7gAkimKhpo9FAef9we1GYWqWDYnQOryNMTxAMJP2GI4edhrJhUsab2XLq3LzqjmtJvv5WZ8JDYhD9So9RgjVIQhPNEmMm0jssFe2VI8g5nnfsBF2a_9KymSO5GKdRcDd93sNu5GT1DEeOFqTwkQ-zZDDS4EAEvN-ZHU3jhPTWsa6ZrGtQzrlgfRoaUf4n_3wDCv_SXvJCzrtwuvKtDaAxcyXicCcZBLpCgwpbNkRQ",
+			"type": "string"
+		},
+		{
+			"key": "employee1Token",
+			"value": "eyJhbGciOiJSUzI1NiIsImVudGl0bGVtZW50IjoiMTkwdWZwbnVoY3h0MGE3c2F2eTR0OSJ9.eyJpc3MiOiJvZmZsaW5lIiwic3ViIjoiMSIsImNvZ25pdG86Z3JvdXBzIjpbIkFETUlOIiwiQ09MTEVDVElPTl9NQU5BR0VSIiwiRURJVE9SIl0sImF1ZCI6Im5hdGFsaWEiLCJpYXQiOjE2NTY0OTI1MTYsImV4cCI6MTc1NjQ5MzExNiwiYWFhIjoiNXVnZjJ1c3hmMng5bzN5aGgyOWJvIn0.ip8uEyb-xaeDn6Ktw8Ol1BSPYKzDZEdzoSzsCS7y939eo9T_FPTbb-ELW4uTX9WwjHl0IEW5q_2wbJDFrAS1qZkt0xhIjOrrinHh4LOxq4mVuP1QVCAW1lMEyuMNjJ0CyXxg3GidsY154HSx8cXlApwbYlp86Yh8btrh6M08PQpYPjZ9plrcfJ2OSw4hY-oXx0yRGUYDXuSOkNJ3mPDbRl9os0__Oym-1Fd9NhDkmFNBzYQyUQdUZ2qzUllpipbf91nOk-8KcwDpv_CzlnJsGBvPyMkr_lHsG9YOXwLhY9V_2m5FgdQkyUjyy7ute55-rvLdIHUm8y5CDpMaDUC5Qg",
+			"type": "string"
+		}
+	]
+}

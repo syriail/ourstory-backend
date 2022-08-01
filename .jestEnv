@@ -1,0 +1,7 @@
+process.env.COLLECTIONS_TABLE = "collections-dev"
+process.env.EMPLOYEES_TABLE = "employees-dev"
+process.env.TRANSLATIONS_TABLE = "translations-dev"
+process.env.TRANSLATION_BY_TYPE_INDEX = "translation-by-type-index-dev"
+process.env.STORIES_TABLE = "stories-dev"
+process.env.TAG_VALUES_TABLE = "tag-values-dev"
+process.env.STORIES_BY_COLLECTION_INDEX = "stories-by-collection-index-dev"

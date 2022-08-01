@@ -1,0 +1,28 @@
+[
+    {
+        "id":"70a17da6-5610-4cee-8c68-52d0d1bceba6",
+        "managerId":"3",
+        "defaultLocale":"ar",
+        "createdAt": "2022-06-24T10:51:59.154Z",
+        "tags":["topic", "area"],
+        "editors":["2"],
+        "availableTranslations":[]
+    },
+    {
+        "id":"929e483b-9fe7-46b1-acca-516a7ab2551f",
+        "managerId":"1",
+        "defaultLocale":"en",
+        "createdAt": "2022-06-24T10:51:59.154Z",
+        "tags":["more_info"],
+        "editors":["2", "3"],
+        "availableTranslations":[]
+    },
+    {
+        "id":"11107d91-d88c-40eb-a7af-b0774cc30a14",
+        "managerId":"1",
+        "defaultLocale":"en",
+        "createdAt": "2022-06-24T10:51:59.154Z",
+        "editors":["3"],
+        "availableTranslations":[]
+    }
+]
