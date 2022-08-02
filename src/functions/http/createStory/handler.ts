@@ -5,7 +5,7 @@ import { middyfy } from '@libs/lambda';
 import httpErrorHandler from '@middy/http-error-handler'
 import cors from '@middy/http-cors'
 import * as createError from 'http-errors'
-import CreateStoryRequest from '../../../requests'
+import {CreateStoryRequest} from '../../../requests'
 import schema from "./schema";
 import {createStory} from '../../../businessLogic/stories'
 import { createLogger } from "@libs/logger";
