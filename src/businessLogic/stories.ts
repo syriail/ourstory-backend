@@ -161,4 +161,11 @@ export const getDownloadUrls = async(path: string, requestId: string):Promise<st
     return bucketAcess.getMediaDownloadUrl(path, requestId)
     
 }
+export const deleteMedia = async(storyId: string, path: string, requestId: string)=>{
+    const logger = createLogger(requestId, 'BusinessLogic', 'deleteMedia')
+    logger.info('Delete mediaFile from the story in DB')
+    await storyAccess.deleteMedia(storyId, path, requestId)
+    logger.info('Delete file from storage')
+    await bucketAcess.deleteMediaFile(path, requestId)
+}
 

@@ -55,3 +55,17 @@ export interface TranslateCollectionRequest{
     description?: string
     tags?: Tag[]
 }
+
+export interface TranslateStoryRequest{
+    id: string
+    locale: string
+    collectionId: string
+    storyTitle: string
+    storyAbstraction?: string
+    storyTranscript?: string
+    storyTellerName?: string
+    storyTellerPlaceOfOrigin?: string
+    storyTellerResidency?:string
+    storyCollectorName?:string
+    tags?:TagValueRequest[]
+}

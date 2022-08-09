@@ -1,13 +1,18 @@
 import {createDynamodbClient} from './dynamodb-infrastructure'
-import {MediaFormat, Story, TagValue, TranslableType} from '../models'
+import {MediaFile, MediaFormat, Story, Tag, TagValue, TranslableType} from '../models'
 import { createLogger } from '../libs/logger'
+import { TranslateStoryRequest } from 'src/requests'
+import { CollectionAccess } from './collectionsAccess'
+import OurstoryErrorConstructor from 'src/ourstoryErrors'
 export class StoryAccess{
     constructor(
         private readonly documentClient = createDynamodbClient(),
+        private readonly collectionsTable = process.env.COLLECTIONS_TABLE,
         private readonly storiesTable = process.env.STORIES_TABLE,
         private readonly translationsTable = process.env.TRANSLATIONS_TABLE,
         private readonly tagValuesTable = process.env.TAG_VALUES_TABLE,
-        private readonly byCollectionIndex = process.env.STORIES_BY_COLLECTION_INDEX
+        private readonly byCollectionIndex = process.env.STORIES_BY_COLLECTION_INDEX,
+        private readonly collectionAccess = new CollectionAccess()
     ){}
 
     async getStoriesByCollectionId(collectionId: string, requestId: string):Promise<{[key:string]:any}[]>{
@@ -105,6 +110,19 @@ export class StoryAccess{
             }
         }
         transactItems.push(putStroy)
+        const updateCollection: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
+            Update:{
+                TableName: this.collectionsTable,
+                Key:{
+                    id: story.collectionId
+                },
+                UpdateExpression: 'ADD storiesCount :one',
+                ExpressionAttributeValues: {
+                    ':one': 1
+                }
+            }
+        }
+        transactItems.push(updateCollection)
         //Add translation of the translable fields
         let translation = {
             id: story.id,
@@ -125,7 +143,6 @@ export class StoryAccess{
                 Item: translation
             }
         }
-        logger.info(JSON.stringify(putTranslation))
         transactItems.push(putTranslation)
         //Add tag value for each tag
         for(const tag of story.tags){
@@ -278,6 +295,19 @@ export class StoryAccess{
             }
         }
         transactItems.push(deleteStroy)
+        const updateCollection: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
+            Update:{
+                TableName: this.collectionsTable,
+                Key:{
+                    id: baseStory.collectionId
+                },
+                UpdateExpression: 'ADD storiesCount :one',
+                ExpressionAttributeValues: {
+                    ':one': -1
+                }
+            }
+        }
+        transactItems.push(updateCollection)
         //Delete default translation
         const deleteDefaultTranslation: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
             Delete:{
@@ -355,5 +385,111 @@ export class StoryAccess{
             }
         }
         await this.documentClient.update(params).promise()
+    }
+
+
+    //TODO unit testing
+    async saveTranslation(request: TranslateStoryRequest, requestId: string){
+        const logger = createLogger(requestId, 'StoryAccess', 'saveTranslation')
+        logger.info('Start saveTranslation of story')
+        let transactItems: AWS.DynamoDB.DocumentClient.TransactWriteItemList = []
+
+        //Update base collection
+        const updateStory: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
+            Update:{
+                TableName: this.storiesTable,
+                Key:{
+                    id: request.id
+                },
+                UpdateExpression: 'SET availableTranslations = list_append(availableTranslations, :locale)',
+                ExpressionAttributeValues: {
+                    ':locale': [request.locale]
+                }
+            }
+        }
+        transactItems.push(updateStory)
+
+        //Update translation of the translable fields
+        let updateTranslationExp = 'SET storyTitle = :storyTitle'
+        let updateTranslationValues = {
+            ":storyTitle": request.storyTitle
+        }
+
+        let toSet = []
+        let toRemove = []
+        request.storyAbstraction ? toSet.push('storyAbstraction') : toRemove.push('storyAbstraction')
+        request.storyTranscript ? toSet.push('storyTranscript') : toRemove.push('storyTranscript')
+        request.storyTellerName ? toSet.push('storyTellerName') : toRemove.push('storyTellerName')
+        request.storyTellerPlaceOfOrigin ? toSet.push('storyTellerPlaceOfOrigin') : toRemove.push('storyTellerPlaceOfOrigin')
+        request.storyTellerResidency ? toSet.push('storyTellerResidency') : toRemove.push('storyTellerResidency')
+        request.storyCollectorName ? toSet.push('storyCollectorName') : toRemove.push('storyCollectorName')
+
+        for(const attr  of toSet){
+            updateTranslationExp = updateTranslationExp + `, ${attr} = :${attr}`
+            updateTranslationValues[`:${attr}`] = request[attr]
+        }
+        if(toRemove.length > 0){
+            updateTranslationExp = updateTranslationExp + ` REMOVE ${toRemove[0]}`
+            for(let i = 1; i < toRemove.length; i++){
+                updateTranslationExp = updateTranslationExp + `, ${toRemove[i]}`
+            }
+        }
+        //Get collection's tag to get their names
+        const collectionTags: Tag[] = await this.collectionAccess.getCollectionTagsTranslation(request.collectionId, request.locale)
+        //Add tag value for each tag
+        for(const tag of request.tags){   
+            const collectionTag = collectionTags.find(t=> t.slug === tag.slug)         
+            const putTagValue: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
+                Put:{
+                    TableName: this.tagValuesTable,
+                    Item: {
+                        storyId: request.id,
+                        tagId: `${request.collectionId}#${tag.slug}`,
+                        locale: request.locale,
+                        name: collectionTag.name,
+                        value: tag.value
+                    }
+                }
+            }
+            transactItems.push(putTagValue)
+        }
+
+        let transation: AWS.DynamoDB.DocumentClient.TransactWriteItemsInput = {
+            TransactItems: transactItems
+        }
+        try{
+            await this.documentClient.transactWrite(transation).promise()
+            logger.info('Story translation has been updated Dynamodb')
+        }catch(error){
+            logger.error(error)
+            throw error
+        }
+    }
+
+    async deleteMedia(storyId: string, path: string, requestId: string){
+        const logger = createLogger(requestId, 'StoryAccess', 'deleteMedia')
+        logger.info('Start updating story')
+        const baseStory = await this.getStoryById(storyId, requestId)
+        if(!baseStory) throw OurstoryErrorConstructor._404('Story not found')
+        //Remove media from mediaFile of the story in the DB
+        const mediaFiles: MediaFile[] = baseStory.mediaFiles
+        const newMediaFiles = mediaFiles.filter(m => m.mediaPath !== path)
+        const params: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+            TableName: this.storiesTable,
+            Key:{
+                id: storyId
+            },
+            UpdateExpression: "SET mediaFiles = :mediaFiles",
+            ExpressionAttributeValues:{
+                ':mediaFiles': newMediaFiles
+            }
+        }
+        try{
+            await this.documentClient.update(params).promise()
+        }catch(error){
+            logger.error(error)
+            throw error
+        }
+        
     }
 }

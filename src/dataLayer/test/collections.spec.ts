@@ -3,6 +3,8 @@ import * as uuid from 'uuid'
 import {reseedData,} from '../../testUtils/dynamodb'
 import {Collection} from '../../models'
 import {CollectionAccess} from '../collectionsAccess'
+import { UpdateCollectionRequest } from "src/requests"
+import OurstoryErrorConstructor from '../../ourstoryErrors'
 const seededCollections = require('../../../db-seeds/collections.json')
 const seededTranslations = require('../../../db-seeds/translations.json')
 const seededEmployees = require('../../../db-seeds/employees.json')
@@ -128,5 +130,31 @@ describe('Data Access createCollection', ()=>{
         expect(receivedCollection).toStrictEqual(expectedCollection)
         expect(receivedTranslation).toStrictEqual(expectedTranslation)
         expect(receivedTagsTranslation).toStrictEqual(expectedTagsTranslation)
+    })
+})
+
+describe('Data Access updateCollection', ()=>{
+    it('Should throw error with code 403, collection id does not exists', async()=>{
+        await reseedData()
+        const updateRequest: UpdateCollectionRequest = {
+            id: '123',
+            defaultLocale: 'en',
+            name:'some name',
+            editors:['1']
+        }
+        await expect(collectionsAccess.updateCollection(updateRequest, '234', requestId)).rejects.toThrowError(OurstoryErrorConstructor._403('Either collection does not exist or user is not its manager'))
+        
+    })
+    it('Should throw error with code 403, user is not the manager', async()=>{
+        await reseedData()
+        const id = seededCollections[0].id
+        const updateRequest: UpdateCollectionRequest = {
+            id: id,
+            defaultLocale: 'en',
+            name:'some name',
+            editors:['1']
+        }
+        await expect(collectionsAccess.updateCollection(updateRequest, '234', requestId)).rejects.toThrowError(OurstoryErrorConstructor._403('Either collection does not exist or user is not its manager'))
+        
     })
 })

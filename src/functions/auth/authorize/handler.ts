@@ -58,7 +58,8 @@ const authorizeHandler: APIGatewayAuthorizerHandler = async(event: APIGatewayTok
                   'arn:aws:execute-api:*:*:*/*/*/employees/role/*',
                   'arn:aws:execute-api:*:*:*/*/GET/downloadUrl',
                   'arn:aws:execute-api:*:*:*/*/GET/uploadUrl/*',
-                  'arn:aws:execute-api:*:*:*/*/GET/tags'
+                  'arn:aws:execute-api:*:*:*/*/GET/tags',
+                  'arn:aws:execute-api:*:*:*/*/media/delete/*'
                 ]
               }
             ]
@@ -82,7 +83,8 @@ const authorizeHandler: APIGatewayAuthorizerHandler = async(event: APIGatewayTok
                   'arn:aws:execute-api:*:*:*/*/*/story/*',
                   'arn:aws:execute-api:*:*:*/*/GET/downloadUrl',
                   'arn:aws:execute-api:*:*:*/*/GET/uploadUrl/*',
-                  'arn:aws:execute-api:*:*:*/*/GET/tags'
+                  'arn:aws:execute-api:*:*:*/*/GET/tags',
+                  'arn:aws:execute-api:*:*:*/*/media/delete/*'
                 ]
               }
             ]

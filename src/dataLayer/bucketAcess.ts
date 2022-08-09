@@ -35,6 +35,20 @@ export default class BucketAccess{
     })
     return singedUrl
   }
+  async deleteMediaFile(key: string, requestId: string){
+    const logger = createLogger(requestId, 'Bucket Access', 'deleteMediaFile')
+    logger.info('Delete object: ' + key)
+    try{
+      await this.s3.deleteObject({
+        Bucket: this.mediaBucket,
+        Key: key
+      }).promise()
+    }catch(error){
+      //If delete object fails, do nothing just log the error. It's not a deal breaker
+      logger.error(error)
+    }
+    
+  }
 }
 
 

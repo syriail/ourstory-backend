@@ -41,6 +41,13 @@ export default {
             Resource:{
                 'Fn::GetAtt':['TagValuesTable', 'Arn']
             }
+        },
+        {
+            Effect: 'Allow',
+            Action: ['dynamodb:UpdateItem'],
+            Resource:{
+                'Fn::GetAtt':['CollectionsTable', 'Arn']
+            }
         }
     ]
 }

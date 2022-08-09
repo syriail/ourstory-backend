@@ -1,13 +1,17 @@
 import { handlerPath } from "@libs/handler-resolver";
 
-export default {
+export default{
     handler: `${handlerPath(__dirname)}/handler.main`,
     tracing: true,
+    environment:{
+        MEDIA_BUCKET: '${self:custom.s3Buckets.mediaBucket}',
+        URL_EXPIRATION:'300'
+    },
     events:[
         {
             http:{
                 method: 'DELETE',
-                path: 'story/{storyId}',
+                path: 'media/delete/{storyId}',
                 authorizer: 'authorize',
                 cors: true
             }
@@ -17,30 +21,31 @@ export default {
     iamRoleStatements:[
         {
             Effect: 'Allow',
-            Action: ['dynamodb:DeleteItem'],
+            Action: ['dynamodb:GetItem', 'dynamodb:UpdateItem'],
             Resource:{
                 'Fn::GetAtt':['StoriesTable', 'Arn']
             }
         },
         {
             Effect: 'Allow',
-            Action: ['dynamodb:DeleteItem'],
+            Action: ['dynamodb:Query'],
             Resource:{
                 'Fn::GetAtt':['TranslationsTable', 'Arn']
             }
         },
         {
             Effect: 'Allow',
-            Action: ['dynamodb:DeleteItem'],
+            Action: ['s3:DeleteObject'],
             Resource:{
-                'Fn::GetAtt':['TagValuesTable', 'Arn']
-            }
-        },
-        {
-            Effect: 'Allow',
-            Action: ['dynamodb:UpdateItem'],
-            Resource:{
-                'Fn::GetAtt':['CollectionsTable', 'Arn']
+                'Fn::Join':[
+                    '/',
+                    [
+                        {
+                            'Fn::GetAtt':['MediaBucket', 'Arn']
+                        },
+                        '*'
+                    ]
+                ]
             }
         }
     ]

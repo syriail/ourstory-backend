@@ -103,8 +103,8 @@ export const createCollection = async(request: CreateCollectionRequest, userId: 
     return collection
 }
 
-export const updateCollection = async(request: UpdateCollectionRequest, requestId: string)=>{
-    await collectionAccess.updateCollection(request, requestId)
+export const updateCollection = async(request: UpdateCollectionRequest, userId: string, requestId: string)=>{
+    await collectionAccess.updateCollection(request, userId, requestId)
 }
 
 export const saveCollectionTranslation = async(request: TranslateCollectionRequest, requestId: string)=>{

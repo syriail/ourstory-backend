@@ -1,6 +1,7 @@
 import { Collection, TranslableType, Tag } from '../models'
 import {createDynamodbClient} from './dynamodb-infrastructure'
 import {createLogger} from '../libs/logger'
+import OurstoryErrorConstructor from '../ourstoryErrors'
 import { UpdateCollectionRequest, TranslateCollectionRequest } from '../requests'
 
 
@@ -62,6 +63,7 @@ export class CollectionAccess{
             managerId: collection.manager.id,
             createdAt: collection.createdAt,
             defaultLocale: collection.defaultLocale,
+            storiesCount: 0,
             availableTranslations: collection.availableTranslations,
             tags: slugs,
             editors: editorsIds
@@ -186,7 +188,7 @@ export class CollectionAccess{
         return parseTag(response.Item)
     }
 
-    async updateCollection(collection: UpdateCollectionRequest, requestId: string){
+    async updateCollection(collection: UpdateCollectionRequest, userId: string, requestId: string){
         const logger = createLogger(requestId, 'CollectionAccess', 'updateCollection')
         logger.info('Start update collection transaction')
         let transactItems: AWS.DynamoDB.DocumentClient.TransactWriteItemList = []
@@ -194,7 +196,7 @@ export class CollectionAccess{
         const editorsIds = collection.editors ? collection.editors : []
 
         //Update base collection
-
+        // collection must exists and the user must be the manager
         const updateCollection: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
             Update:{
                 TableName: this.collectionTable,
@@ -202,9 +204,11 @@ export class CollectionAccess{
                     id: collection.id
                 },
                 UpdateExpression: 'SET tags = :slugs, editors = :editors',
+                ConditionExpression: "attribute_exists(id) AND managerId = :managerId",
                 ExpressionAttributeValues: {
                     ':slugs': slugs,
-                    ':editors': editorsIds
+                    ':editors': editorsIds,
+                    ':managerId': userId
                 }
             }
         }
@@ -237,21 +241,23 @@ export class CollectionAccess{
         }
         transactItems.push(updateTranslation)
 
-        for(const tag of collection.tags){
-            //Using Update won't work when the tag value does not exist
-            //Using Add will add the item if not exists or replace it otherwise
-            const putTagTranslation: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
-                Put:{
-                    TableName: this.translationsTable,
-                    Item:{
-                        id: `${collection.id}#${tag.slug}`,
-                        translatedType: TranslableType.TAG,
-                        tagName: tag.name,
-                        locale: collection.defaultLocale
+        if(collection.tags){
+            for(const tag of collection.tags){
+                //Using Update won't work when the tag value does not exist
+                //Using Add will add the item if not exists or replace it otherwise
+                const putTagTranslation: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
+                    Put:{
+                        TableName: this.translationsTable,
+                        Item:{
+                            id: `${collection.id}#${tag.slug}`,
+                            translatedType: TranslableType.TAG,
+                            tagName: tag.name,
+                            locale: collection.defaultLocale
+                        }
                     }
                 }
+                transactItems.push(putTagTranslation)
             }
-            transactItems.push(putTagTranslation)
         }
         let transation: AWS.DynamoDB.DocumentClient.TransactWriteItemsInput = {
             TransactItems: transactItems
@@ -261,6 +267,11 @@ export class CollectionAccess{
             await this.documentClient.transactWrite(transation).promise()
             logger.info('Update collection transation successfully finished')
         }catch(error){
+            //The only reason the transaction could be cancelled for is that the collection does not exist or the user is not the manager
+            if(error.code === 'TransactionCanceledException'){
+                logger.error('Either collection does not exist or user is not its manager')
+                throw OurstoryErrorConstructor._403('Either collection does not exist or user is not its manager')
+            }
             logger.error(error)
             throw error
         }
@@ -287,7 +298,7 @@ export class CollectionAccess{
         }
         transactItems.push(updateCollection)
 
-        //Update collection default locale translation
+        //Update collection locale translation
 
         let updateTranslationExp = 'SET collectionName = :name'
         let updateTranslationValues = {
