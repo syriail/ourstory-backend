@@ -97,7 +97,15 @@ export const updateStory = async(storyId: string, request: CreateStoryRequest, r
 export const deleteStory = async(storyId: string, requestId: string) =>{
     const logger = createLogger(requestId, 'BusinessLogic', 'deleteStory')
     logger.info(`Delete story ${storyId}`)
-    await storyAccess.deleteStory(storyId, requestId)
+    //Get base story to know how many translations available, to be deleted also
+    const baseStory = await storyAccess.getStoryById(storyId, requestId)
+    await storyAccess.deleteStory(baseStory, requestId)
+    //Delete all media from storage
+    if(baseStory.mediaFiles){
+        for(const media of baseStory.mediaFiles){
+            await bucketAcess.deleteMediaFile(media.mediaPath, requestId)
+        }
+    }
 }
 
 const buildStoryFromRequest = async(storyId:string, request: CreateStoryRequest, requestId: string): Promise<Story> =>{

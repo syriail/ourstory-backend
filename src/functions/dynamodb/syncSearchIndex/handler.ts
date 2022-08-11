@@ -18,7 +18,11 @@ const syncSearchIndex: DynamoDBStreamHandler = async(event: DynamoDBStreamEvent)
         console.log(record)
         if(record.eventName === 'REMOVE'){
             //REMOVE story content in the index
-            return
+            const objectID = record.dynamodb.Keys.id?.S
+            const locale = record.dynamodb.Keys.locale?.S
+            const indexName = `${indexNamePrefix}${locale}`
+            const index = algoliaClien.initIndex(indexName)
+            await index.deleteObject(objectID)
         }else{
             if(record.dynamodb.NewImage?.translatedType?.S === 'STORY'){
                 try{

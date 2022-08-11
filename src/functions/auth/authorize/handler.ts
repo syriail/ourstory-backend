@@ -102,7 +102,6 @@ const authorizeHandler: APIGatewayAuthorizerHandler = async(event: APIGatewayTok
                 Resource: [
                   'arn:aws:execute-api:*:*:*/*/GET/tags',
                   'arn:aws:execute-api:*:*:*/*/GET/stories/*',
-                  'arn:aws:execute-api:*:*:*/*/*/story/*',
                   'arn:aws:execute-api:*:*:*/*/GET/downloadUrl'
                 ]
               }

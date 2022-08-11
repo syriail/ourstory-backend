@@ -280,17 +280,15 @@ export class StoryAccess{
         }
     }
 
-    async deleteStory(storyId: string, requestId: string){
+    async deleteStory(baseStory: any, requestId: string){
         const logger = createLogger(requestId, 'StoryAccess', 'deleteStory')
-        logger.info('Start delete story transaction' + storyId)
-        //Get base story to know how many translations available, to be deleted also
-        const baseStory = await this.getStoryById(storyId, requestId)
+        logger.info('Start delete story transaction' + baseStory.id)
         let transactItems: AWS.DynamoDB.DocumentClient.TransactWriteItemList = []
         const deleteStroy: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
             Delete:{
                 TableName: this.storiesTable,
                 Key:{
-                    id: storyId
+                    id: baseStory.id
                 }
             }
         }
@@ -313,7 +311,7 @@ export class StoryAccess{
             Delete:{
                 TableName: this.translationsTable,
                 Key:{
-                    id: storyId,
+                    id: baseStory.id,
                     locale: baseStory.defaultLocale
                 }
             }
@@ -325,7 +323,7 @@ export class StoryAccess{
                 Delete:{
                     TableName: this.translationsTable,
                     Key:{
-                        id: storyId,
+                        id: baseStory.id,
                         locale: locale
                     }
                 }
@@ -338,7 +336,7 @@ export class StoryAccess{
             TableName: this.tagValuesTable,
             KeyConditionExpression: 'storyId = :storyId',
             ExpressionAttributeValues: {
-                ":storyId": storyId
+                ":storyId": baseStory.id
             }
         }
         const tagValuesRes = await this.documentClient.query(tagValuesQuery).promise()
@@ -348,7 +346,7 @@ export class StoryAccess{
                 Delete:{
                     TableName: this.tagValuesTable,
                     Key:{
-                        storyId: storyId,
+                        storyId: baseStory.id,
                         tagId: tag.tagId
                     }
                 }

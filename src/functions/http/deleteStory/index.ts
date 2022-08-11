@@ -3,6 +3,9 @@ import { handlerPath } from "@libs/handler-resolver";
 export default {
     handler: `${handlerPath(__dirname)}/handler.main`,
     tracing: true,
+    environment:{
+        MEDIA_BUCKET: '${self:custom.s3Buckets.mediaBucket}'
+    },
     events:[
         {
             http:{
@@ -17,7 +20,7 @@ export default {
     iamRoleStatements:[
         {
             Effect: 'Allow',
-            Action: ['dynamodb:DeleteItem'],
+            Action: ['dynamodb:GetItem', 'dynamodb:DeleteItem'],
             Resource:{
                 'Fn::GetAtt':['StoriesTable', 'Arn']
             }
@@ -31,7 +34,7 @@ export default {
         },
         {
             Effect: 'Allow',
-            Action: ['dynamodb:DeleteItem'],
+            Action: ['dynamodb:DeleteItem', 'dynamodb:Query'],
             Resource:{
                 'Fn::GetAtt':['TagValuesTable', 'Arn']
             }
@@ -41,6 +44,21 @@ export default {
             Action: ['dynamodb:UpdateItem'],
             Resource:{
                 'Fn::GetAtt':['CollectionsTable', 'Arn']
+            }
+        },
+        {
+            Effect: 'Allow',
+            Action: ['s3:DeleteObject'],
+            Resource:{
+                'Fn::Join':[
+                    '/',
+                    [
+                        {
+                            'Fn::GetAtt':['MediaBucket', 'Arn']
+                        },
+                        '*'
+                    ]
+                ]
             }
         }
     ]
