@@ -34,7 +34,8 @@ export const getCollectionsByEmployee = async(userId: string, locale: string, re
                 createdAt: baseCollection.createdAt,
                 manager,
                 availableTranslations: baseCollection.availableTranslations,
-                editors
+                editors,
+                storiesCount: baseCollection.storiesCount
     
             }
             if(translation.collectionDescription) collection.description = translation.collectionDescription
@@ -66,6 +67,7 @@ export const getCollectionDetails = async(collectionId: string, locale: string, 
         id: baseCollection.id,
         defaultLocale: baseCollection.defaultLocale,
         name: translation.collectionName,
+        storiesCount: baseCollection.storiesCount,
         createdAt: baseCollection.createdAt,
         manager,
         availableTranslations: baseCollection.availableTranslations,
@@ -94,6 +96,7 @@ export const createCollection = async(request: CreateCollectionRequest, userId: 
         availableTranslations: [],
         tags: request.tags ? request.tags : [],
         name: request.name,
+        storiesCount: 0,
         editors
     }
     logger.info('Create Collection: ', {message: collection})

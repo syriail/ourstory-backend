@@ -15,20 +15,31 @@ export class StoryAccess{
         private readonly collectionAccess = new CollectionAccess()
     ){}
 
-    async getStoriesByCollectionId(collectionId: string, requestId: string):Promise<{[key:string]:any}[]>{
+    async getStoriesByCollectionId(collectionId: string, requestId: string, pageSize: number, lastEvaluatedId?: string):Promise<{lastId: string | undefined, stories: {[key:string]:any}[]}>{
         const logger = createLogger(requestId, 'StoryAccess', 'getStoriesByCollectionId')
         logger.info('Collection id: ' + collectionId)
-        const parmas: AWS.DynamoDB.DocumentClient.QueryInput = {
+        let parmas: AWS.DynamoDB.DocumentClient.QueryInput = {
             TableName: this.storiesTable,
             IndexName: this.byCollectionIndex,
             KeyConditionExpression: 'collectionId = :collectionId',
             ExpressionAttributeValues:{
                 ':collectionId': collectionId
+            },
+            Limit: pageSize
+        }
+        if(lastEvaluatedId){
+            parmas.ExclusiveStartKey = {
+                id: lastEvaluatedId,
+                collectionId: collectionId
             }
         }
         const response = await this.documentClient.query(parmas).promise()
         logger.info(`Found ${response.Items.length} collection`)
-        return response.Items
+        const stories = response.Items
+        return {
+            lastId: response.LastEvaluatedKey ? response.LastEvaluatedKey.id : undefined,
+            stories
+        }
     }
     async getStroyTranslation(storyId: string, locale: string, requestId: string):Promise<{[key: string]: any}>{
         const logger = createLogger(requestId, 'StoryAccess', 'getStroyTranslation')

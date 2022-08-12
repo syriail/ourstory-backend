@@ -10,13 +10,13 @@ const storyAccess = new StoryAccess()
 const collectionAccess = new CollectionAccess()
 const bucketAcess = new BucketAccess()
 
-export const getStoriesByCollection = async(collectionId:string, locale:string, requestId: string):Promise<Story[]> =>{
+export const getStoriesByCollection = async(collectionId:string, locale:string, requestId: string, pageSize: number, lastEvaluatedId?: string):Promise<{lastId: string | undefined, stories: Story[]}> =>{
     const logger = createLogger(requestId, 'BusinessLogic', 'getStoriesByCollection')
     let stories: Story[] = []
     //Get base stories
-    const baseStories = await storyAccess.getStoriesByCollectionId(collectionId, requestId)
+    const baseStories = await storyAccess.getStoriesByCollectionId(collectionId, requestId, pageSize, lastEvaluatedId)
     //For each base story, get it's translation of the given locale to build full story
-    for(const baseStory of baseStories){
+    for(const baseStory of baseStories.stories){
         const targetLocale = baseStory.availableTranslations.includes(locale) ? locale : baseStory.defaultLocale
         const translation = await storyAccess.getStroyTranslation(baseStory.id, targetLocale, requestId)
         let story: Story = {
@@ -39,7 +39,10 @@ export const getStoriesByCollection = async(collectionId:string, locale:string, 
         stories.push(story)
     }
     logger.info(`Return ${stories.length} story`)
-    return stories
+    return {
+        stories,
+        lastId: baseStories.lastId
+    }
 }
 
 export const getStoryDetails = async(storyId: string, locale: string, requestId: string): Promise<Story> =>{

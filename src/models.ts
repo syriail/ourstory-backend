@@ -51,6 +51,7 @@ export interface Employee{
 export interface Collection{
   id: string
   name: string
+  storiesCount: number
   description?: string
   createdAt: string
   manager: Employee

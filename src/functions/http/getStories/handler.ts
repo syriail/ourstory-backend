@@ -13,14 +13,16 @@ const getStoriesHandler: APIGatewayProxyHandler = async(event: APIGatewayProxyEv
     const requestId = event.requestContext.requestId
     const collectionId = event.pathParameters.collectionId
     const locale = event.queryStringParameters.locale
+    const pageSize = event.queryStringParameters.size || '20'
+    const lastId = event.queryStringParameters.last
     const logger = createLogger(requestId, 'handler', 'getStoriesHandler')
     logger.info(`Get stories of collection: ${collectionId}`)
     try{
-        const stories = await getStoriesByCollection(collectionId, locale, requestId)
-        logger.info(`Return ${stories.length} story`)
+        const res = await getStoriesByCollection(collectionId, locale, requestId, parseInt(pageSize), lastId)
+        logger.info(`Return ${res.stories.length} story`)
     return {
         statusCode: 200,
-        body: JSON.stringify({stories})
+        body: JSON.stringify(res)
     }
     }catch(error){
         logger.error(error)
