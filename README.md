@@ -101,11 +101,11 @@ Key:
 
 - storyId: String / HASH
 - tagId: String /RANGE
-  tagId is in the form of collectionId#slug
+  tagId is in the form of locale#slug
 
 Expected Attributes:
 
-- locale: String
+- collectionId: String
 - name: String
 - value: String
 

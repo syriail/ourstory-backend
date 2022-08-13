@@ -75,8 +75,7 @@ export class StoryAccess{
         logger.info(`Get tag values of story ${storyId}, locale: ${locale}`)
         const params: AWS.DynamoDB.DocumentClient.QueryInput = {
             TableName: this.tagValuesTable,
-            KeyConditionExpression: 'storyId = :storyId',
-            FilterExpression: 'locale = :locale',
+            KeyConditionExpression: 'storyId = :storyId AND begins_with(tagId, :locale)',
             ExpressionAttributeValues:{
                 ':storyId': storyId,
                 ':locale': locale
@@ -88,9 +87,9 @@ export class StoryAccess{
             const tagIdParts = item.tagId.split('#')
             const tagValue: TagValue = {
                 storyId: item.storyId,
-                collectionId: tagIdParts[0],
+                locale: tagIdParts[0],
                 slug: tagIdParts[1],
-                locale,
+                collectionId: item.collectionId,
                 name: item.name,
                 value: item.value
             }
@@ -162,8 +161,8 @@ export class StoryAccess{
                     TableName: this.tagValuesTable,
                     Item: {
                         storyId: story.id,
-                        tagId: `${story.collectionId}#${tag.slug}`,
-                        locale: story.defaultLocale,
+                        tagId: `${story.defaultLocale}#${tag.slug}`,
+                        collectionId: story.collectionId,
                         name: tag.name,
                         value: tag.value
                     }
@@ -268,8 +267,8 @@ export class StoryAccess{
                     TableName: this.tagValuesTable,
                     Item: {
                         storyId: story.id,
-                        tagId: `${story.collectionId}#${tag.slug}`,
-                        locale: story.defaultLocale,
+                        tagId: `${story.defaultLocale}#${tag.slug}`,
+                        collectionId: story.collectionId,
                         name: tag.name,
                         value: tag.value
                     }
@@ -401,6 +400,7 @@ export class StoryAccess{
     async saveTranslation(request: TranslateStoryRequest, requestId: string){
         const logger = createLogger(requestId, 'StoryAccess', 'saveTranslation')
         logger.info('Start saveTranslation of story')
+        logger.info(request)
         let transactItems: AWS.DynamoDB.DocumentClient.TransactWriteItemList = []
 
         //Update base collection
@@ -443,9 +443,21 @@ export class StoryAccess{
                 updateTranslationExp = updateTranslationExp + `, ${toRemove[i]}`
             }
         }
+        const updateTranslation: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
+            Update:{
+                TableName: this.translationsTable,
+                Key:{
+                    id: request.id,
+                    locale: request.locale
+                },
+                UpdateExpression: updateTranslationExp,
+                ExpressionAttributeValues: updateTranslationValues
+            }
+        }
+        transactItems.push(updateTranslation)
         //Get collection's tag to get their names
         const collectionTags: Tag[] = await this.collectionAccess.getCollectionTagsTranslation(request.collectionId, request.locale)
-        //Add tag value for each tag
+        //Add/update tag value for each tag
         for(const tag of request.tags){   
             const collectionTag = collectionTags.find(t=> t.slug === tag.slug)         
             const putTagValue: AWS.DynamoDB.DocumentClient.TransactWriteItem = {
@@ -453,8 +465,8 @@ export class StoryAccess{
                     TableName: this.tagValuesTable,
                     Item: {
                         storyId: request.id,
-                        tagId: `${request.collectionId}#${tag.slug}`,
-                        locale: request.locale,
+                        tagId: `${request.locale}#${tag.slug}`,
+                        collectionId: request.collectionId,
                         name: collectionTag.name,
                         value: tag.value
                     }
@@ -499,6 +511,6 @@ export class StoryAccess{
             logger.error(error)
             throw error
         }
-        
+      
     }
 }

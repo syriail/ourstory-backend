@@ -2,7 +2,7 @@ import { StoryAccess } from "../dataLayer/storiesAccess";
 import {CollectionAccess} from '../dataLayer/collectionsAccess'
 import {Story, TagValue, UploadAttachmentData, MediaFormat } from "../models";
 import * as uuid from 'uuid'
-import {CreateStoryRequest} from '../requests';
+import {CreateStoryRequest, TranslateStoryRequest} from '../requests';
 import BucketAccess from "../dataLayer/bucketAcess";
 import {createLogger} from '../libs/logger'
 
@@ -95,6 +95,12 @@ export const updateStory = async(storyId: string, request: CreateStoryRequest, r
     await storyAccess.updateStory(story, requestId)
     return getStoryDetails(storyId, story.defaultLocale, requestId)
 
+}
+
+export const saveStoryTranslation = async(request: TranslateStoryRequest, requestId: string)=>{
+    const logger = createLogger(requestId, 'BusinessLogic', 'saveStoryTranslation')
+    logger.info(`save story translation ${request.id}`)
+    await storyAccess.saveTranslation(request, requestId)
 }
 
 export const deleteStory = async(storyId: string, requestId: string) =>{

@@ -23,7 +23,8 @@ import {
   getDownloadUrl,
   syncSearchIndex,
   getTags,
-  deleteMedia
+  deleteMedia,
+  translateStory
 } from '@functions'
 
 
@@ -101,7 +102,8 @@ const serverlessConfiguration: AWS = {
     getDownloadUrl,
     syncSearchIndex,
     getTags,
-    deleteMedia
+    deleteMedia,
+    translateStory
   },
   resources:{
     Resources:{
