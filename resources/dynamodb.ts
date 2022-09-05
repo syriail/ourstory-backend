@@ -157,6 +157,33 @@ const DynamodDbResources: AWS['resources']['Resources']={
                 StreamViewType: 'NEW_IMAGE'
             }
         }
+    },
+    StaticPagesTable:{
+        Type: 'AWS::DynamoDB::Table',
+        Properties:{
+            TableName: '${self:custom.tables.staticPagesTable}',
+            AttributeDefinitions:[
+                {
+                    AttributeName: 'locale',
+                    AttributeType: 'S'
+                },
+                {
+                    AttributeName: 'slug',
+                    AttributeType: 'S'
+                }
+            ],
+            KeySchema:[
+                {
+                    AttributeName: 'locale',
+                    KeyType: 'HASH'
+                },
+                {
+                    AttributeName: 'slug',
+                    KeyType: 'RANGE'
+                }
+            ],
+            BillingMode: 'PAY_PER_REQUEST'
+        }
     }
 }
 export default DynamodDbResources

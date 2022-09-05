@@ -69,3 +69,12 @@ export interface TranslateStoryRequest{
     storyCollectorName?:string
     tags?:TagValueRequest[]
 }
+
+export interface CreateStaticPage{
+    slug: string
+    locale: string
+    name: string
+    content: string,
+    description: string,
+    layouts: string[]
+  }

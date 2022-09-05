@@ -32,6 +32,10 @@ export enum TranslableType{
   STORY = 'STORY',
   TAG = 'TAG'
 }
+export enum PageLayout{
+  NAV_BAR = 'NAV_BAR',
+  FOOTER = 'FOOTER'
+}
 export interface MediaFile {
   format: MediaFormat,
   mediaPath: string
@@ -90,6 +94,16 @@ export interface TagValue{
 export interface UploadAttachmentData{
 uploadUrl: string
 attachmentUrl: string
+}
+
+export interface StaticPage{
+  slug: string
+  locale: string
+  name: string
+  content?: string,
+  description: string,
+  layouts: PageLayout[],
+  availableTranslations?: string[]
 }
 
 export const languages = ['en', 'ar']

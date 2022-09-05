@@ -24,7 +24,14 @@ import {
   syncSearchIndex,
   getTags,
   deleteMedia,
-  translateStory
+  translateStory,
+  createPage,
+  updatePage,
+  getPagesNames,
+  getPages,
+  getPageDetails,
+  getPageContent,
+  deletePage
 } from '@functions'
 
 
@@ -61,6 +68,7 @@ const serverlessConfiguration: AWS = {
       STORIES_TABLE: '${self:custom.tables.storiesTable}',
       TRANSLATIONS_TABLE: '${self:custom.tables.translationsTable}',
       TAG_VALUES_TABLE: '${self:custom.tables.tagValuesTable}',
+      STATIC_PAGES_TABLE:'${self:custom.tables.staticPagesTable}',
       TRANSLATION_BY_TYPE_INDEX: '${self:custom.tables.translationsByTypeIndex}',
       STORIES_BY_COLLECTION_INDEX: '${self:custom.tables.storiesByCollectionIndex}'
       
@@ -103,7 +111,14 @@ const serverlessConfiguration: AWS = {
     syncSearchIndex,
     getTags,
     deleteMedia,
-    translateStory
+    translateStory,
+    createPage,
+    updatePage,
+    getPagesNames,
+    getPages,
+    getPageDetails,
+    getPageContent,
+    deletePage
   },
   resources:{
     Resources:{
@@ -122,7 +137,8 @@ const serverlessConfiguration: AWS = {
       storiesByCollectionIndex: 'stories-by-collection-index-${self:provider.stage}',
       translationsTable: 'translations-${self:provider.stage}',
       translationsByTypeIndex: 'translation-by-type-index-${self:provider.stage}',
-      tagValuesTable: 'tag-values-${self:provider.stage}'
+      tagValuesTable: 'tag-values-${self:provider.stage}',
+      staticPagesTable: 'static-pages-${self:provider.stage}'
     },
     cognito:{
       userPoolName: 'ourstory-user-pool-${self:provider.stage}',
