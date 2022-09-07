@@ -143,7 +143,7 @@ Possible Attributes: _Depending on what item to be translated_
   ```
   const stage = {
     stage:'dev',
-    profile: 'udacity'
+    profile: 'yourprofile'
   }
   export default stage
 
@@ -182,5 +182,5 @@ To run Postman collection offline:
 ### Test Online
 
 - Import the collection in postman
-- Set the variable {{host}} = https://3c6itjpmv1.execute-api.eu-west-1.amazonaws.com/dev in Postman
+- Set the variable {{host}} = https://yourhost in Postman
 - Run tests in at the collection level or Run each request individually

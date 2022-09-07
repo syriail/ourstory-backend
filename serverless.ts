@@ -48,12 +48,20 @@ const serverlessConfiguration: AWS = {
     'serverless-offline',
     'serverless-s3-local'
   ],
+  params:{
+    dev:{
+      cognitoPoolId: 'eu-west-1_aDjbCCegM'
+    },
+    prod:{
+      cognitoPoolId: 'eu-west-1_USQZ5LKdH'
+    }
+  },
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
     profile: stage.profile,
     region: 'eu-west-1',
-    stage: stage.stage,
+    stage: '${opt:stage}',
     tracing:{
       lambda: true,
       apiGateway: true
@@ -72,7 +80,9 @@ const serverlessConfiguration: AWS = {
       TAG_VALUES_TABLE: '${self:custom.tables.tagValuesTable}',
       STATIC_PAGES_TABLE:'${self:custom.tables.staticPagesTable}',
       TRANSLATION_BY_TYPE_INDEX: '${self:custom.tables.translationsByTypeIndex}',
-      STORIES_BY_COLLECTION_INDEX: '${self:custom.tables.storiesByCollectionIndex}'
+      STORIES_BY_COLLECTION_INDEX: '${self:custom.tables.storiesByCollectionIndex}',
+      ALGOLIA_APP_ID: '0W9MM71MTB',
+      ALGOLIA_API_KEY: 'ec7200398598c6350bbd7a8e5d75763f'
       
     },
     iam:{
