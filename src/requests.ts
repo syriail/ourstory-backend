@@ -1,4 +1,4 @@
-import { EmployeeRole, Tag } from "./models"
+import {Tag } from "./models"
 
 export interface CreateCollectionRequest{
     defaultLocale: string
@@ -12,12 +12,12 @@ export interface CreateCollectionRequest{
 
 
 export interface CreateEmployeeRequest{
-    id: string
     locale: string
     firstName: string
     lastName: string
     email: string
-    roles:EmployeeRole[]
+    password: string
+    roles:string[]
 }
 
 export interface CreateStoryRequest{

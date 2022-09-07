@@ -30,7 +30,8 @@ export const parseErrorObject = (e: any): OurstoryError | undefined =>{
 const OurstoryErrorConstructor = {
     _403: (msg?: string) =>new OurstoryError(403, 'ResourceAccessDenied' , msg? msg : 'Access Denied'),
     _400: (msg?: string)=> new OurstoryError(400, 'InvalidRequest', msg ? msg : 'Missing parameters'),
-    _404: (msg?: string)=> new OurstoryError(400, 'ResourceNotFound', msg ? msg : 'Resource Not Found')
+    _404: (msg?: string)=> new OurstoryError(400, 'ResourceNotFound', msg ? msg : 'Resource Not Found'),
+    _502:(msg?: string)=> new OurstoryError(502, 'InternalServerError', msg || 'Internal Server Error')
 }
 export default OurstoryErrorConstructor
 

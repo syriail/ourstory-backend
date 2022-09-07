@@ -31,7 +31,9 @@ import {
   getPages,
   getPageDetails,
   getPageContent,
-  deletePage
+  deletePage,
+  createEmployee,
+  getEmployees
 } from '@functions'
 
 
@@ -118,7 +120,9 @@ const serverlessConfiguration: AWS = {
     getPages,
     getPageDetails,
     getPageContent,
-    deletePage
+    deletePage,
+    createEmployee,
+    getEmployees
   },
   resources:{
     Resources:{
