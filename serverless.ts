@@ -59,9 +59,9 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
-    profile: stage.profile,
     region: 'eu-west-1',
     stage: '${opt:stage}',
+    profile: stage.profile,
     tracing:{
       lambda: true,
       apiGateway: true
@@ -81,8 +81,8 @@ const serverlessConfiguration: AWS = {
       STATIC_PAGES_TABLE:'${self:custom.tables.staticPagesTable}',
       TRANSLATION_BY_TYPE_INDEX: '${self:custom.tables.translationsByTypeIndex}',
       STORIES_BY_COLLECTION_INDEX: '${self:custom.tables.storiesByCollectionIndex}',
-      ALGOLIA_APP_ID: '0W9MM71MTB',
-      ALGOLIA_API_KEY: 'ec7200398598c6350bbd7a8e5d75763f'
+      ALGOLIA_APP_ID: stage.ALGOLIA_APP_ID,
+      ALGOLIA_API_KEY: stage.ALGOLIA_API_KEY
       
     },
     iam:{
@@ -201,7 +201,7 @@ const serverlessConfiguration: AWS = {
           ]
         }
       },
-      stages: ['dev']
+      stages: ['dev', 'prod']
     },
     esbuild: {
       bundle: true,
