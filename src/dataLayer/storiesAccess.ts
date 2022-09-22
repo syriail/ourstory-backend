@@ -419,9 +419,10 @@ export class StoryAccess{
         transactItems.push(updateStory)
 
         //Update translation of the translable fields
-        let updateTranslationExp = 'SET storyTitle = :storyTitle'
+        let updateTranslationExp = 'SET translatedType = :translatedType, storyTitle = :storyTitle'
         let updateTranslationValues = {
-            ":storyTitle": request.storyTitle
+            ":storyTitle": request.storyTitle,
+            ":translatedType": TranslableType.STORY
         }
 
         let toSet = []
